@@ -15,7 +15,7 @@
 int buttonState = 0;
 int lastButtonState = 0;
 int setLedState = 0;
-LED_STATE state = OFF;
+LED_STATE state = PULSE;
 int adc;
 
 ISR(ADC_vect) //Triggad vid avslutat ADC-omvandling. 
