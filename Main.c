@@ -14,7 +14,9 @@
 
 int buttonState = 0;
 int lastButtonState = 0;
-int adc = 0;
+int setLedState = 0;
+LED_STATE state = OFF;
+int adc;
 
 ISR(ADC_vect) //Triggad vid avslutat ADC-omvandling. 
 {
@@ -24,8 +26,14 @@ ISR(ADC_vect) //Triggad vid avslutat ADC-omvandling.
 ISR(TIMER2_COMPA_vect) //Triggad vid compare match. 
 {
     //Deluppgift 3
-    ADCSRA |= (1 << ADSC); //start conversion in single conversion mode
-    OCR0A = adc;
+    //ADCSRA |= (1 << ADSC); //start conversion in single conversion mode
+    //OCR0A = adc;
+
+    //Deluppgift 4
+    set_button_state(&buttonState);
+    print_button_state(&buttonState, &lastButtonState, &setLedState);
+    set_led_state(&setLedState, &state);
+    led_command(&adc, &state);
 }
 
 int main(void) 
@@ -43,6 +51,8 @@ int main(void)
         print_button_state(&buttonState, &lastButtonState);*/
 
         //Deluppgift 3
+
+        //Deluppgift 4
     }
 }
 

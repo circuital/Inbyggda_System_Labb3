@@ -25,10 +25,10 @@ void set_button_state(int* buttonState)
     }
 }
 
-void print_button_state(int* buttonState, int* lastButtonState)
+void print_button_state(int* buttonState, int* lastButtonState, int* setLedState)
 {
     /**
-    * Skriver ut om knappen är nedtryckt eller släppt i serieterminalen. 
+    * Skriver ut om knappen är nedtryckt eller släppt i serieterminalen. Om släppt sätts variablen setLedState, som används i funktionen set_led_state(), till 1.
     */
     if (*buttonState == 1 && *lastButtonState == 0)
     {
@@ -37,6 +37,7 @@ void print_button_state(int* buttonState, int* lastButtonState)
     else if (*buttonState == 0 && *lastButtonState == 1)
     {
         printf_P(PSTR("released\n\r"));
+        *setLedState = 1;
     }
     *lastButtonState = *buttonState;
 }

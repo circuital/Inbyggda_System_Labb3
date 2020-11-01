@@ -3,6 +3,6 @@
 
 void button_init(void);
 void set_button_state(int* buttonState);
-void print_button_state(int* buttonState, int* lastButtonState);
+void print_button_state(int* buttonState, int* lastButtonState, int* setLedState);
 
 #endif // _BUTTON_H_

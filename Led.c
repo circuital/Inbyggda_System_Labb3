@@ -33,3 +33,74 @@ int simple_ramp()
     return bri;
 }
 
+void set_led_state(int* setLedState, LED_STATE* ledState)
+{
+    /**
+    * State machine för LEDen, ändrar variabeln ledState OM variablen setLedState är lika med 1, och nollställer isåfall även setLedState.
+    */
+    if (*setLedState == 1)
+    {
+        if (*ledState == PULSE)
+        {
+            *ledState = POT;
+        }
+        else if (*ledState == POT)
+        {
+            *ledState = BLINK;
+        }
+        else if (*ledState == BLINK)
+        {
+            *ledState = OFF;
+        }
+        else if (*ledState == OFF)
+        {
+            *ledState = PULSE;
+        }
+        *setLedState = 0;
+    }
+}
+
+
+void led_command(int* adc, LED_STATE* ledState)
+{
+    /**
+    * Kollar nuvarande ledState och startar motsvarande funktionalitet.
+    */
+    if (*ledState == PULSE)
+    {
+        TCCR0A |= (1 << COM0A1); //Sätter 8e (COM0A1) biten i TCCR0A (Timer/Counter Control Register 0 A ) till 1 för att connecta OCR0A (Output compare Register).
+        OCR0A = simple_ramp();
+    }
+    else if (*ledState == POT)
+    {
+        ADCSRA |= (1 << ADSC); //Startar ADC omvandling i single conversion mode.
+        if (*adc == 0)
+        {
+            TCCR0A &= ~(1 << COM0A1); //Sätter 8e (COM0A1) biten i TCCR0A (Timer/Counter Control Register 0 A ) till 0 för att disconnecta OCR0A (Output compare Register).
+        }
+        else
+        {
+            TCCR0A |= (1 << COM0A1); //Sätter 8e (COM0A1) biten i TCCR0A (Timer/Counter Control Register 0 A ) till 1 för att connecta OCR0A (Output compare Register).
+            OCR0A = *adc;
+        }
+    }
+    else if (*ledState == BLINK)
+    {
+        static int counter = 0;
+        if (counter == 100)
+        {
+            TCCR0A ^= (1 << COM0A1); //Togglar 8e (COM0A1) biten i TCCR0A (Timer/Counter Control Register 0 A ) till 1/0 för att connecta/disconnecta OCR0A (Output compare Register).
+            OCR0A = 255;
+            counter = 0;
+        }
+        else
+        {
+            counter++;
+        }
+    }
+    else if (*ledState == OFF)
+    {
+        TCCR0A &= ~(1 << COM0A1); //Sätter 8e (COM0A1) biten i TCCR0A (Timer/Counter Control Register 0 A ) till 0 för att disconnecta OCR0A (Output compare Register).
+    }
+}
+
